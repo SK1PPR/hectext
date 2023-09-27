@@ -70,16 +70,16 @@ impl Editor {
     fn process_keypress(&mut self) -> Result<(), std::io::Error> {
         let pressed_key = Terminal::read_key()?;
         match pressed_key {
-            Key::Ctrl('s') => {
+            Key::Ctrl('q') => {
                 if self.quit_times > 0 && self.document.is_dirty() {
                     self.status_message = StatusMessage::from(format!(
                         "WARNING! File has unsaved changes. Press Ctrl-Q {} more times to quit",
                         self.quit_times
-                    ));;
+                    ));
                 }
                 self.should_quit = true
             }
-            Key::Ctrl('a') => self.save(),
+            Key::Ctrl('s') => self.save(),
             Key::Char(c) => {
                 self.document.insert(&self.cursor_position, c);
                 self.move_cursor(Key::Right);
@@ -113,7 +113,7 @@ impl Editor {
         let Position { x, y } = self.cursor_position;
         let width = self.terminal.size().width as usize;
         let height = self.terminal.size().height as usize;
-        let mut offset = &mut self.offset;
+        let offset = &mut self.offset;
         if y < offset.y {
             offset.y = y;
         } else if y >= offset.y.saturating_add(height) {
